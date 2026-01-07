@@ -133,16 +133,10 @@ stages:
         if exist "$(Build.SourcesDirectory)\Tailspin.SpaceGame.Web\obj" rd /s /q "$(Build.SourcesDirectory)\Tailspin.SpaceGame.Web\obj"
       displayName: 'Remove build artifacts'
     - task: DotNetCoreCLI@2
-      displayName: 'Restore and build - $(buildConfiguration)'
-      inputs:
-        command: 'build'
-        arguments: '--configuration $(buildConfiguration)'
-        projects: '$(Build.SourcesDirectory)/Tailspin.SpaceGame.Web.UITests/Tailspin.SpaceGame.Web.UITests.csproj'
-    - task: DotNetCoreCLI@2
       displayName: 'Run unit tests - $(buildConfiguration)'
       inputs:
         command: 'test'
-        arguments: '--no-build --configuration $(buildConfiguration) --framework net8.0'
+        arguments: '--configuration $(buildConfiguration)'
         publishTestResults: true
         projects: '$(Build.SourcesDirectory)/Tailspin.SpaceGame.Web.UITests/Tailspin.SpaceGame.Web.UITests.csproj'
 
