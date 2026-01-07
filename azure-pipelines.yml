@@ -116,7 +116,7 @@ stages:
     dependsOn: Deploy
     displayName: 'Run UI tests'
     pool:
-      vmImage: 'windows-2025'
+      vmImage: 'windows-2022'
     variables:
     - group: 'Release'
     steps:
@@ -125,23 +125,31 @@ stages:
       displayName: 'Use .NET SDK $(dotnetSdkVersion)'
       inputs:
         version: '$(dotnetSdkVersion)'
+    - task: DotNetCoreCLI@2
+      displayName: 'Clean the project'
+      inputs:
+        command: 'clean'
+        projects: '$(Build.SourcesDirectory)/Tailspin.SpaceGame.Web.UITests/Tailspin.SpaceGame.Web.UITests.csproj'
+        arguments: '--configuration $(buildConfiguration)'
+      continueOnError: true
     - script: |
-        echo "Cleaning all build artifacts..."
+        echo "Removing all build artifacts..."
         if exist "$(Build.SourcesDirectory)\Tailspin.SpaceGame.Web.UITests\bin" rd /s /q "$(Build.SourcesDirectory)\Tailspin.SpaceGame.Web.UITests\bin"
         if exist "$(Build.SourcesDirectory)\Tailspin.SpaceGame.Web.UITests\obj" rd /s /q "$(Build.SourcesDirectory)\Tailspin.SpaceGame.Web.UITests\obj"
         if exist "$(Build.SourcesDirectory)\Tailspin.SpaceGame.Web\bin" rd /s /q "$(Build.SourcesDirectory)\Tailspin.SpaceGame.Web\bin"
         if exist "$(Build.SourcesDirectory)\Tailspin.SpaceGame.Web\obj" rd /s /q "$(Build.SourcesDirectory)\Tailspin.SpaceGame.Web\obj"
-      displayName: 'Clean build artifacts'
+      displayName: 'Remove build artifacts'
     - task: DotNetCoreCLI@2
       displayName: 'Restore project dependencies'
       inputs:
         command: 'restore'
         projects: '$(Build.SourcesDirectory)/Tailspin.SpaceGame.Web.UITests/Tailspin.SpaceGame.Web.UITests.csproj'
+        arguments: '--force'
     - task: DotNetCoreCLI@2
       displayName: 'Build the project - $(buildConfiguration)'
       inputs:
         command: 'build'
-        arguments: '--no-restore --configuration $(buildConfiguration)'
+        arguments: '--no-restore --configuration $(buildConfiguration) --framework net8.0'
         projects: '$(Build.SourcesDirectory)/Tailspin.SpaceGame.Web.UITests/Tailspin.SpaceGame.Web.UITests.csproj'
     - task: DotNetCoreCLI@2
       displayName: 'Run unit tests - $(buildConfiguration)'
