@@ -121,8 +121,14 @@ stages:
     - group: 'Release'
     steps:
     - checkout: self
-    - script: dir /s *.csproj
-      displayName: 'List all csproj files (debug)'
+    - script: |
+        echo "Current directory:"
+        cd
+        echo "Directory contents:"
+        dir
+        echo "All csproj files:"
+        dir /s *.csproj
+      displayName: 'Debug - List directory contents'
     - task: UseDotNet@2
       displayName: 'Use .NET SDK $(dotnetSdkVersion)'
       inputs:
@@ -131,13 +137,13 @@ stages:
       displayName: 'Restore project dependencies'
       inputs:
         command: 'restore'
-        projects: '**/Tailspin.SpaceGame.Web.UITests.csproj'
+        projects: '$(Build.SourcesDirectory)/Tailspin.SpaceGame.Web.UITests/Tailspin.SpaceGame.Web.UITests.csproj'
     - task: DotNetCoreCLI@2
       displayName: 'Build the project - $(buildConfiguration)'
       inputs:
         command: 'build'
         arguments: '--no-restore --configuration $(buildConfiguration)'
-        projects: '**/Tailspin.SpaceGame.Web.UITests.csproj'
+        projects: '$(Build.SourcesDirectory)/Tailspin.SpaceGame.Web.UITests/Tailspin.SpaceGame.Web.UITests.csproj'
     - task: DotNetCoreCLI@2
       displayName: 'Run unit tests - $(buildConfiguration)'
       inputs:
