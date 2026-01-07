@@ -3,7 +3,6 @@ trigger:
 
 variables:
   buildConfiguration: 'Release'
-  dotnetSdkVersion: '8.x'
 
 stages:
 - stage: 'Build'
@@ -30,7 +29,7 @@ stages:
       inputs:
         verbose: false
 
-    - script: './node_modules/.bin/node-sass $(wwwrootDir) --output $(wwwrootDir)'
+    - script: './node_modules/.bin/sass $(wwwrootDir):$(wwwrootDir)'
       displayName: 'Compile Sass assets'
 
     - task: gulp@1
@@ -57,7 +56,7 @@ stages:
       displayName: 'Publish the project - $(buildConfiguration)'
       inputs:
         command: 'publish'
-        projects: '$(System.DefaultWorkingDirectory)/**/Tailspin.SpaceGame.Web.csproj' 
+        projects: '**/*.csproj'
         publishWebProjects: false
         arguments: '--no-build --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/$(buildConfiguration)'
         zipAfterPublish: true
@@ -110,6 +109,7 @@ stages:
               azureSubscription: 'Resource Manager - Tailspin - Space Game'
               appName: '$(WebAppNameTest)'
               package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/*.zip'
+
   - job: RunUITests
     dependsOn: Deploy
     displayName: 'Run UI tests'
