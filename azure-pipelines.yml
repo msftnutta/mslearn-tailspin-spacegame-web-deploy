@@ -133,6 +133,10 @@ stages:
       displayName: 'Use .NET SDK $(dotnetSdkVersion)'
       inputs:
         version: '$(dotnetSdkVersion)'
+    - script: |
+        if exist "$(Build.SourcesDirectory)\Tailspin.SpaceGame.Web.UITests\bin" rd /s /q "$(Build.SourcesDirectory)\Tailspin.SpaceGame.Web.UITests\bin"
+        if exist "$(Build.SourcesDirectory)\Tailspin.SpaceGame.Web.UITests\obj" rd /s /q "$(Build.SourcesDirectory)\Tailspin.SpaceGame.Web.UITests\obj"
+      displayName: 'Clean build artifacts'
     - task: DotNetCoreCLI@2
       displayName: 'Restore project dependencies'
       inputs:
