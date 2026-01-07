@@ -119,7 +119,8 @@ stages:
       vmImage: 'windows-2022'
     variables:
     - group: 'Release'
-    steps: 
+    steps:
+    - checkout: self
     - task: UseDotNet@2
       displayName: 'Use .NET SDK $(dotnetSdkVersion)'
       inputs:
