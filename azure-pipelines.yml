@@ -121,21 +121,16 @@ stages:
     - group: 'Release'
     steps:
     - checkout: self
-    - script: |
-        echo "Current directory:"
-        cd
-        echo "Directory contents:"
-        dir
-        echo "All csproj files:"
-        dir /s *.csproj
-      displayName: 'Debug - List directory contents'
     - task: UseDotNet@2
       displayName: 'Use .NET SDK $(dotnetSdkVersion)'
       inputs:
         version: '$(dotnetSdkVersion)'
     - script: |
+        echo "Cleaning all build artifacts..."
         if exist "$(Build.SourcesDirectory)\Tailspin.SpaceGame.Web.UITests\bin" rd /s /q "$(Build.SourcesDirectory)\Tailspin.SpaceGame.Web.UITests\bin"
         if exist "$(Build.SourcesDirectory)\Tailspin.SpaceGame.Web.UITests\obj" rd /s /q "$(Build.SourcesDirectory)\Tailspin.SpaceGame.Web.UITests\obj"
+        if exist "$(Build.SourcesDirectory)\Tailspin.SpaceGame.Web\bin" rd /s /q "$(Build.SourcesDirectory)\Tailspin.SpaceGame.Web\bin"
+        if exist "$(Build.SourcesDirectory)\Tailspin.SpaceGame.Web\obj" rd /s /q "$(Build.SourcesDirectory)\Tailspin.SpaceGame.Web\obj"
       displayName: 'Clean build artifacts'
     - task: DotNetCoreCLI@2
       displayName: 'Restore project dependencies'
@@ -154,7 +149,7 @@ stages:
         command: 'test'
         arguments: '--no-build --configuration $(buildConfiguration)'
         publishTestResults: true
-        projects: '**/*UITests.csproj'
+        projects: '$(Build.SourcesDirectory)/Tailspin.SpaceGame.Web.UITests/Tailspin.SpaceGame.Web.UITests.csproj'
 
 - stage: 'Staging'
   displayName: 'Deploy to the staging environment'
